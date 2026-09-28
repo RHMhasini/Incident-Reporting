@@ -260,7 +260,7 @@ ObjectManager::Attribute.add(
     nulloption: true,
     multiple:   false,
     null:       false,
-    default:    Ticket::State.find_by(default_follow_up: true).id,
+    default:    Ticket::State.find_by(default_create: true).id,
     translate:  true,
     filter:     Ticket::State.where(active: true).by_category_ids(:viewable),
   },

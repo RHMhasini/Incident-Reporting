@@ -740,9 +740,6 @@ class App.TicketZoom extends App.Controller
     modelDiff = @formDiff(currentParams, currentStore)
     return if _.isEmpty(modelDiff)
 
-    # set followup state if needed
-    @setDefaultFollowUpState(modelDiff, currentStore)
-
     @markFormDiff(modelDiff)
     @taskUpdateAll(modelDiff)
 
@@ -767,48 +764,6 @@ class App.TicketZoom extends App.Controller
       currentStore.article.internal = internal
 
     currentStore
-
-  setDefaultFollowUpState: (modelDiff, currentStore) ->
-
-    # if the default state is set
-    # and the body get changed to empty
-    # then we want to reset the state
-    if @isDefaultFollowUpStateSet && !modelDiff.article.body
-      @$('.sidebar select[name=state_id]').val(currentStore.ticket.state_id).trigger('change')
-      @isDefaultFollowUpStateSet = false
-      return
-
-    # set default if body is filled
-    return if !modelDiff.article.body
-
-    # and state got not changed
-    return if modelDiff.ticket.state_id
-
-    # and we are in the customer interface
-    return if @ticket.currentView() isnt 'customer'
-
-    # and the default is was not set before
-    return if @isDefaultFollowUpStateSet
-
-    # and only if ticket is not in "new" state
-    if @ticket && @ticket.state_id
-      state = App.TicketState.findByAttribute('id', @ticket.state_id)
-      return if state && state.default_create is true
-
-    # prevent multiple changes for the default follow-up state
-    @isDefaultFollowUpStateSet = true
-
-    # get state
-    state = App.TicketState.findByAttribute('default_follow_up', true)
-
-    # change ui and trigger change
-    if state
-      @$('.sidebar[data-tab=ticket] select[name=state_id]').val(state.id).trigger('change')
-
-    true
-
-  resetDefaultFollowUpState: ->
-    @isDefaultFollowUpStateSet = false
 
   formCurrent: =>
     currentParams =
@@ -1272,9 +1227,6 @@ class App.TicketZoom extends App.Controller
 
     # reset task
     @taskReset()
-
-    # reset default follow-up state
-    @resetDefaultFollowUpState()
 
     # reset/delete uploaded attachments
     App.Ajax.request(

@@ -47,6 +47,7 @@ class Ticket < ApplicationModel
   # workflow checks should run after before_create and before_update callbacks
   # the transaction dispatcher must be run after the workflow checks!
   include ChecksCoreWorkflow
+  include Ticket::ChecksIncidentTransitions
   include HasTransactionDispatcher
 
   transaction_ignore_changes_attributes :updated_at,

@@ -222,7 +222,9 @@ returns
 
       # set ticket state to open if not new
       if ticket
+        incident_terminal_state_id = ticket.state_id if %w[Closed Cancelled].include?(ticket.state.name)
         set_attributes_by_x_headers(ticket, 'ticket', mail, 'followup')
+        ticket.state_id = incident_terminal_state_id if incident_terminal_state_id
 
         # save changes set by x-zammad-ticket-followup-* headers
         ticket.save! if ticket.has_changes_to_save?
@@ -230,7 +232,8 @@ returns
         # set ticket to open again or keep create state
         if !mail[:'x-zammad-ticket-followup-state'] && !mail[:'x-zammad-ticket-followup-state_id']
           new_state = Ticket::State.find_by(default_create: true)
-          if ticket.state_id != new_state.id && !mail[:'x-zammad-out-of-office']
+          # Incoming messages must not reopen terminal incidents; keep processing the article.
+          if !incident_terminal_state_id && ticket.state_id != new_state.id && !mail[:'x-zammad-out-of-office']
             ticket.state = Ticket::State.find_by(default_follow_up: true)
             ticket.save!
           end

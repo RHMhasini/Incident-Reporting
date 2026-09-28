@@ -277,6 +277,15 @@ class CoreWorkflow::Attributes
   end
 
   def values(attribute)
+    if @payload['class_name'] == 'Ticket' && attribute[:name] == 'state_id'
+      # Bulk forms have no single saved ticket; each submitted ticket is checked on save.
+      if @payload['screen'] == 'overview_bulk'
+        return Ticket::State.where(active: true, name: Ticket::State::INCIDENT_TRANSITIONS.keys).pluck(:id)
+      end
+
+      return Ticket::State.incident_state_ids(saved, @user)
+    end
+
     values = nil
     if attribute_filter?(attribute)
       values = screen_value(attribute, 'filter')

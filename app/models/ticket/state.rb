@@ -54,6 +54,33 @@ returns:
     by_category(category).pluck(:id)
   end
 
+  INCIDENT_TRANSITIONS = {
+    'Reported'    => ['Triaged', 'Cancelled'],
+    'Triaged'     => ['In Progress', 'Reported', 'Cancelled'],
+    'In Progress' => ['Mitigated', 'Triaged', 'Cancelled'],
+    'Mitigated'   => ['Monitoring', 'In Progress', 'Cancelled'],
+    'Monitoring' => ['Resolved', 'In Progress', 'Cancelled'],
+    'Resolved'   => ['Closed', 'In Progress'],
+    'Closed'     => ['In Progress'],
+    'Cancelled'  => ['Reported', 'In Progress'],
+  }.freeze
+
+  def self.incident_state_ids(ticket, user)
+    return where(active: true, name: 'Reported').pluck(:id) if ticket.new_record?
+
+    state = ticket.state
+    names = if user&.permissions?('ticket.agent') && user.group_access?(ticket.group_id, 'change')
+              INCIDENT_TRANSITIONS.fetch(state.name) do
+                # Preserve tickets in retired states without silently reclassifying them.
+                state.state_type.name == 'merged' ? [] : ['In Progress', 'Cancelled']
+              end
+            else
+              []
+            end
+
+    [state.id] | where(active: true, name: names).pluck(:id)
+  end
+
   def ensure_defaults
     return if callback_loop
 

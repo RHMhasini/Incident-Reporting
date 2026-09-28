@@ -2,41 +2,41 @@
 
 Ticket::State.create_if_not_exists(
   id:             1,
-  name:           __('New'),
+  name:           __('Reported'),
   state_type_id:  Ticket::StateType.find_by(name: 'new').id,
   default_create: true,
 )
 
 Ticket::State.create_if_not_exists(
-  id:                2,
-  name:              __('Triaged'),
+  id:            2,
+  name:          __('Triaged'),
+  state_type_id: Ticket::StateType.find_by(name: 'open').id,
+)
+
+Ticket::State.create_if_not_exists(
+  id:                3,
+  name:              __('In Progress'),
   state_type_id:     Ticket::StateType.find_by(name: 'open').id,
   default_follow_up: true,
 )
 
 Ticket::State.create_if_not_exists(
-  id:            3,
-  name:          __('In progress'),
+  id:            4,
+  name:          __('Mitigated'),
   state_type_id: Ticket::StateType.find_by(name: 'open').id,
-)
-
-Ticket::State.create_if_not_exists(
-  id:                4,
-  name:              __('Waiting for client'),
-  state_type_id:     Ticket::StateType.find_by(name: 'pending reminder').id,
-  ignore_escalation: true,
 )
 
 Ticket::State.create_if_not_exists(
   id:            5,
-  name:          __('Planned'),
+  name:          __('Monitoring'),
   state_type_id: Ticket::StateType.find_by(name: 'open').id,
 )
 
 Ticket::State.create_if_not_exists(
-  id:            6,
-  name:          __('In QA'),
-  state_type_id: Ticket::StateType.find_by(name: 'open').id,
+  id:                6,
+  name:              __('Cancelled'),
+  state_type_id:     Ticket::StateType.find_by(name: 'closed').id,
+  ignore_escalation: true,
 )
 
 Ticket::State.create_if_not_exists(
