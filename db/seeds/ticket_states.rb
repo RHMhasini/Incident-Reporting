@@ -52,3 +52,11 @@ Ticket::State.create_if_not_exists(
   ignore_escalation: true,
   default_close:     true,
 )
+
+# Native ticket merging requires this technical state; state-type filters hide it from forms.
+Ticket::State.create_if_not_exists(
+  id:                9,
+  name:              __('merged'),
+  state_type_id:     Ticket::StateType.find_by(name: 'merged').id,
+  ignore_escalation: true,
+)

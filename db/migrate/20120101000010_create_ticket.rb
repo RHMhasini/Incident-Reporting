@@ -84,6 +84,11 @@ class CreateTicket < ActiveRecord::Migration[4.2]
       t.column :escalation_at,                    :timestamp, limit: 3,   null: true
       t.column :pending_time,                     :timestamp, limit: 3,   null: true
       t.column :type,                             :string,    limit: 100, null: true
+      t.column :incident_category,                :string,    limit: 255, null: true
+      t.column :engineering_owner,                :string,    limit: 150, null: true
+      t.column :target_resolution_date,           :date,                  null: true
+      t.column :resolution_details,               :string,    limit: 5000, null: true
+      t.column :release_date,                     :date,                  null: true
       t.column :time_unit,                        :decimal, precision: 6, scale: 2, null: true
       t.column :preferences,                      :text, limit: 500.kilobytes + 1, null: true
       t.column :ai_agent_running,                 :boolean, default: false, null: false

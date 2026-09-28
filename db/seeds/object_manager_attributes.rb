@@ -2513,6 +2513,7 @@ ObjectManager::Attribute.add(
   display: __('Category'),
   data_type: 'select',
   data_option: {
+    default: '',
     options: {
       'bug' => __('Bug'),
       'login_access' => __('Login/Access'),
@@ -2528,13 +2529,13 @@ ObjectManager::Attribute.add(
   active: true,
   screens: {
     create_middle: {
-      'ticket.agent' => { null: false },
+      '-all-' => { null: false },
     },
     edit: {
       'ticket.agent' => { null: false },
     },
   },
-  position: 2000,
+  position: 21,
 )
 
 ObjectManager::Attribute.add(
@@ -2542,18 +2543,21 @@ ObjectManager::Attribute.add(
   object: 'Ticket',
   name: 'engineering_owner',
   display: __('Engineering Owner'),
-  data_type: 'input',
+  data_type: 'select',
   data_option: {
-    type: 'text',
+    default: '',
+    relation: 'User',
+    relation_condition: { roles: 'Agent' },
+    nulloption: true,
+    multiple: false,
     maxlength: 150,
     null: true,
+    translate: false,
+    permission: ['ticket.agent'],
   },
   editable: true,
   active: true,
   screens: {
-    create_middle: {
-      'ticket.agent' => { null: true },
-    },
     edit: {
       'ticket.agent' => { null: true },
     },
@@ -2569,13 +2573,11 @@ ObjectManager::Attribute.add(
   data_type: 'date',
   data_option: {
     null: true,
+    permission: ['ticket.agent'],
   },
   editable: true,
   active: true,
   screens: {
-    create_middle: {
-      'ticket.agent' => { null: true },
-    },
     edit: {
       'ticket.agent' => { null: true },
     },
@@ -2593,6 +2595,7 @@ ObjectManager::Attribute.add(
     maxlength: 5000,
     rows: 6,
     null: true,
+    permission: ['ticket.agent'],
   },
   editable: true,
   active: true,
@@ -2612,6 +2615,7 @@ ObjectManager::Attribute.add(
   data_type: 'date',
   data_option: {
     null: true,
+    permission: ['ticket.agent'],
   },
   editable: true,
   active: true,
