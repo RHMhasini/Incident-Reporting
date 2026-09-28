@@ -5,3 +5,6 @@ config/database.yml
 node_modules
 log/*.log
 tmp/
+
+# This local file shadows the Rake executable when copied into the Linux image.
+/rake

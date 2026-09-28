@@ -69,6 +69,9 @@ RUN pnpm install --frozen-lockfile
 # Copy application code
 COPY . .
 
+# The PO parser requires LF endings, including when building from a Windows checkout.
+RUN sed -i 's/\r$//' i18n/*.po i18n/*.pot
+
 # Append build information to the Zammad VERSION.
 RUN if [ -z "${COMMIT_SHA}" ]; then \
     echo "Error: the required build argument \$COMMIT_SHA is missing."; \

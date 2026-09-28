@@ -53,3 +53,7 @@ app/assets/stylesheets/fineuploader.css linguist-vendored
 /bin/* text eol=lf
 /script/background-worker.rb text eol=lf
 /script/websocket-server.rb text eol=lf
+
+# The PO parser requires LF endings for translation catalogs.
+/i18n/*.po text eol=lf
+/i18n/*.pot text eol=lf
