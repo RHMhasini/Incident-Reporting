@@ -376,6 +376,10 @@ ObjectManager::Attribute.add(
         null:       false,
         item_class: 'column',
       },
+      'ticket.customer' => {
+        null:       false,
+        item_class: 'column',
+      },
     },
     edit:          {
       'ticket.agent' => {

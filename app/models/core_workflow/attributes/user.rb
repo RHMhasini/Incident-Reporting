@@ -3,6 +3,12 @@
 class CoreWorkflow::Attributes::User < CoreWorkflow::Attributes::Base
 
   def values
+    if @attribute[:name] == 'engineering_owner' && @attributes.payload['class_name'] == 'Ticket'
+      users = User.where(id: agent_user_ids).where.not(id: 1)
+      users.each { |user| assets(user) }
+      return users.map(&:id).presence || ['']
+    end
+
     if @attribute[:name] == 'owner_id' && @attributes.payload['class_name'] == 'Ticket'
       return ticket_owner_id_bulk if @attributes.payload['screen'] == 'overview_bulk'
 
