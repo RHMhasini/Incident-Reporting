@@ -142,7 +142,7 @@ ObjectManager::Attribute.add(
   },
   editable:    true,
   internal:    false,
-  active:      false,
+  active:      true,
   screens:     {
     create_middle: {
       '-all-' => {
@@ -2500,4 +2500,125 @@ ObjectManager::Attribute.add(
   to_migrate:  false,
   to_delete:   false,
   position:    1450,
+)
+
+# ============================================================
+# Vezpr Incident Reporting - Custom Ticket Fields
+# ============================================================
+
+ObjectManager::Attribute.add(
+  force: true,
+  object: 'Ticket',
+  name: 'incident_category',
+  display: __('Category'),
+  data_type: 'select',
+  data_option: {
+    options: {
+      'bug' => __('Bug'),
+      'login_access' => __('Login/Access'),
+      'feature_request' => __('Feature Request'),
+      'general_support' => __('General Support'),
+    },
+    nulloption: true,
+    multiple: false,
+    null: false,
+    translate: true,
+  },
+  editable: true,
+  active: true,
+  screens: {
+    create_middle: {
+      'ticket.agent' => { null: false },
+    },
+    edit: {
+      'ticket.agent' => { null: false },
+    },
+  },
+  position: 2000,
+)
+
+ObjectManager::Attribute.add(
+  force: true,
+  object: 'Ticket',
+  name: 'engineering_owner',
+  display: __('Engineering Owner'),
+  data_type: 'input',
+  data_option: {
+    type: 'text',
+    maxlength: 150,
+    null: true,
+  },
+  editable: true,
+  active: true,
+  screens: {
+    create_middle: {
+      'ticket.agent' => { null: true },
+    },
+    edit: {
+      'ticket.agent' => { null: true },
+    },
+  },
+  position: 2010,
+)
+
+ObjectManager::Attribute.add(
+  force: true,
+  object: 'Ticket',
+  name: 'target_resolution_date',
+  display: __('Target Resolution Date'),
+  data_type: 'date',
+  data_option: {
+    null: true,
+  },
+  editable: true,
+  active: true,
+  screens: {
+    create_middle: {
+      'ticket.agent' => { null: true },
+    },
+    edit: {
+      'ticket.agent' => { null: true },
+    },
+  },
+  position: 2020,
+)
+
+ObjectManager::Attribute.add(
+  force: true,
+  object: 'Ticket',
+  name: 'resolution_details',
+  display: __('Resolution Details'),
+  data_type: 'textarea',
+  data_option: {
+    maxlength: 5000,
+    rows: 6,
+    null: true,
+  },
+  editable: true,
+  active: true,
+  screens: {
+    edit: {
+      'ticket.agent' => { null: true },
+    },
+  },
+  position: 2030,
+)
+
+ObjectManager::Attribute.add(
+  force: true,
+  object: 'Ticket',
+  name: 'release_date',
+  display: __('Release Date'),
+  data_type: 'date',
+  data_option: {
+    null: true,
+  },
+  editable: true,
+  active: true,
+  screens: {
+    edit: {
+      'ticket.agent' => { null: true },
+    },
+  },
+  position: 2040,
 )
