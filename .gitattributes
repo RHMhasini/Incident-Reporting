@@ -47,3 +47,9 @@ app/assets/stylesheets/codemirror.css linguist-vendored
 app/assets/stylesheets/fineuploader.css linguist-vendored
 
 .github/workflows/*.lock.yml linguist-generated=true merge=ours
+
+# Linux scripts must retain LF endings on Windows checkouts.
+*.sh text eol=lf
+/bin/* text eol=lf
+/script/background-worker.rb text eol=lf
+/script/websocket-server.rb text eol=lf
