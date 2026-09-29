@@ -11,6 +11,27 @@ RSpec.describe Service::Ticket::Bulk::SingleItemUpdate do
   let(:perform) { { input: { title: 'new title' } } }
 
   describe '#execute' do
+    context 'when a background edit assigns a customer as Engineering Owner' do
+      let(:ticket) do
+        create(:ticket, group: group, state: Ticket::State.find_by!(name: 'Reported'),
+                        priority: Ticket::Priority.find_by!(default_create: true),
+                        type: 'Incident', incident_category: 'bug')
+      end
+      let(:perform) { { input: { engineering_owner: create(:customer).id.to_s } } }
+
+      it 'rejects the assignment and restores the scheduler context' do
+        ticket
+        ApplicationHandleInfo.use('scheduler') do
+          expect { service_result }.to raise_error(described_class::BulkSingleError) do |error|
+            expect(error.original_error).to be_a(ActiveRecord::RecordInvalid)
+            expect(error.record.errors[:engineering_owner]).to be_present
+          end
+          expect(ApplicationHandleInfo.current).to eq('scheduler')
+        end
+        expect(ticket.reload.engineering_owner).to be_blank
+      end
+    end
+
     it 'executes ticket update service' do
       expect { service_result }
         .to change { ticket.reload.title }

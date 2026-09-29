@@ -31,8 +31,11 @@ class Service::Ticket::Bulk::SingleItemUpdate < Service::Base
     ActiveRecord::Base.transaction do
       Pundit.authorize(current_user, ticket, :agent_update_access?)
 
-      Service::Ticket::Update
-        .execute(current_user:, ticket:, ticket_data:, macro:, skip_validators: Service::Ticket::Update::Validator.exceptions)
+      # Background bulk edits are user requests and need the same attribute checks as the UI.
+      ApplicationHandleInfo.use('application_server') do
+        Service::Ticket::Update
+          .execute(current_user:, ticket:, ticket_data:, macro:, skip_validators: Service::Ticket::Update::Validator.exceptions)
+      end
     rescue => e
       error = BulkSingleError.new(record: ticket, original_error: e)
 

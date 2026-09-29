@@ -28,7 +28,7 @@ module Gql::Types::Input::Ticket
              description: 'External references to create for the newly created ticket'
 
     def self.agent_only_fields
-      super + %w[tags shared_draft_id links external_references]
+      (super - ['priority_id']) + %w[tags shared_draft_id links external_references]
     end
 
     def self.agent_only_fields_access

@@ -620,7 +620,7 @@ RSpec.describe Gql::Mutations::Ticket::Create, :aggregate_failures, type: :graph
         expected_base_response.merge(
           {
             'owner'    => { 'fullname' => nil },
-            'priority' => { 'name' => Ticket::Priority.where(default_create: true).first.name },
+            'priority' => { 'name' => priority.name },
             'tags'     => nil
           }
         )
