@@ -24,7 +24,7 @@ class App.UiElement.ApplicationSelector
     operators_type =
       '^datetime$': [__('today'), __('before (absolute)'), __('after (absolute)'), __('before (relative)'), __('after (relative)'), __('within next (relative)'), __('within last (relative)'), __('till (relative)'), __('from (relative)')]
       '^timestamp$': [__('today'), __('before (absolute)'), __('after (absolute)'), __('before (relative)'), __('after (relative)'), __('within next (relative)'), __('within last (relative)'), __('till (relative)'), __('from (relative)')]
-      '^date$': [__('today'), 'before (absolute)', 'after (absolute)', 'before (relative)', 'after (relative)', 'within next (relative)', 'within last (relative)']
+      '^date$': [__('before today'), __('today'), 'before (absolute)', 'after (absolute)', 'before (relative)', 'after (relative)', 'within next (relative)', 'within last (relative)']
       'boolean$': [__('is'), __('is not')]
       'integer$': [__('is'), __('is not'), __('is less than'), __('is less than or equal to'), __('is greater than'), __('is greater than or equal to')]
       '^radio$': [__('is'), __('is not')]
@@ -42,7 +42,7 @@ class App.UiElement.ApplicationSelector
       operators_type =
         '^datetime$': [__('before (absolute)'), __('after (absolute)'), __('before (relative)'), __('after (relative)'), __('within next (relative)'), __('within last (relative)'), __('till (relative)'), __('from (relative)'), __('has changed')]
         '^timestamp$': [__('before (absolute)'), __('after (absolute)'), __('before (relative)'), __('after (relative)'), __('within next (relative)'), __('within last (relative)'), __('till (relative)'), __('from (relative)'), __('has changed')]
-        '^date$': [__('before (absolute)'), __('after (absolute)'), __('before (relative)'), __('after (relative)'), __('within next (relative)'), __('within last (relative)'), __('till (relative)'), __('from (relative)'), __('has changed')]
+        '^date$': [__('before today'), __('before (absolute)'), __('after (absolute)'), __('before (relative)'), __('after (relative)'), __('within next (relative)'), __('within last (relative)'), __('till (relative)'), __('from (relative)'), __('has changed')]
         'boolean$': [__('is'), __('is not'), __('has changed')]
         'integer$': [__('is'), __('is not'),  __('is less than'), __('is less than or equal to'), __('is greater than'), __('is greater than or equal to'), __('has changed')]
         '^radio$': [__('is'), __('is not'), __('has changed')]
@@ -589,7 +589,7 @@ class App.UiElement.ApplicationSelector
 
     # render ui element
     item = ''
-    if config && App.UiElement[config.tag] && meta.operator isnt 'today'
+    if config && App.UiElement[config.tag] && meta.operator not in ['today', 'before today']
       { valueType } = App.UiElement[config.tag]
       config = @buildValueConfigNameValue(config, elementFull, elementRow, groupAndAttribute, elements, meta, attribute, valueType)
 

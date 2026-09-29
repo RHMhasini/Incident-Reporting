@@ -8,6 +8,7 @@ class Selector::Sql < Selector::Base
     'after (relative)',
     'before (absolute)',
     'before (relative)',
+    'before today',
     'contains all not',
     'contains all',
     'contains not',
@@ -572,6 +573,9 @@ class Selector::Sql < Selector::Base
         query << sql_helper.array_contains_one(attribute_name, block_condition[:value], negated: true)
         bind_params += Array.wrap(block_condition[:value])
       end
+    elsif block_condition[:operator] == 'before today'
+      query << "#{attribute} < ?"
+      bind_params.push Time.use_zone(Setting.get('timezone_default')) { Time.zone.today }
     elsif block_condition[:operator] == 'today'
       Time.use_zone(Setting.get('timezone_default')) do
         day_start = Time.zone.now.beginning_of_day.utc
@@ -690,7 +694,7 @@ class Selector::Sql < Selector::Base
   def validate_pre_condition_blank!(condition)
     return if ['has changed', 'has reached', 'has reached warning', 'is any of', 'is none of', 'is set', 'not set'].include? condition[:operator]
 
-    if (condition[:operator] != 'today' && !condition.key?(:value)) ||
+    if (!['today', 'before today'].include?(condition[:operator]) && !condition.key?(:value)) ||
        (condition[:value].instance_of?(Array) && condition[:value].respond_to?(:blank?) && condition[:value].blank?) ||
        (condition[:operator].start_with?('contains') && condition[:value].respond_to?(:blank?) && condition[:value].blank?)
       raise InvalidCondition, "Invalid condition pre_condition nil #{condition}!" if condition[:pre_condition].nil?

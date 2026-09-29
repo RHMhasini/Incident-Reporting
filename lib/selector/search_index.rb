@@ -406,6 +406,10 @@ class Selector::SearchIndex < Selector::Base
         t[:range][key_tmp][:gt] = data[:value]
       end
       query_must.push t
+    elsif data[:operator] == 'before today'
+      today = Time.use_zone(Setting.get('timezone_default')) { Time.zone.today }
+      t[:range] = { key_tmp => { lt: "#{today.iso8601}T00:00:00Z" } }
+      query_must.push t
     elsif data[:operator] == 'today'
       t[:range]                = {}
       t[:range][key_tmp]       = {}
