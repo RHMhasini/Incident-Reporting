@@ -540,6 +540,12 @@ class App.UiElement.ApplicationAction
           selected = true
       columnSelectOptions.push({ value: key, name: App.i18n.translatePlain(value), selected: selected })
 
+    if notificationType is 'email'
+      columnSelectOptions.push
+        value: 'ticket_engineering_owner'
+        name: App.i18n.translatePlain('Engineering Owner (internal, exclusive recipient)')
+        selected: _.include(meta.recipient, 'ticket_engineering_owner')
+
     columnSelectRecipientUserOptions = []
     for user in App.User.all()
       key = "userid_#{user.id}"

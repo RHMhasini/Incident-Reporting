@@ -55,7 +55,7 @@ class Ticket::PerformChanges::Action::NotificationEmail < Ticket::PerformChanges
       subject:       record.subject_build(article_subject),
       content_type:  'text/html',
       body:          body,
-      internal:      execution_data['internal'] || false, # default to public if value was not set
+      internal:      engineering_owner_notification? || execution_data['internal'] || false,
       sender:        article_sender_system,
       type:          article_type_email,
       preferences:   article_preferences(security),
@@ -197,8 +197,27 @@ class Ticket::PerformChanges::Action::NotificationEmail < Ticket::PerformChanges
   end
 
   def recipients_raw
+    # Assignment alerts must not also reach customer or last-sender recipients.
+    return Array(engineering_owner_email).compact if engineering_owner_notification?
+
     @recipients_raw ||= Array(execution_data['recipient'])
       .each_with_object([]) { |recipient_type, sum| sum.concat(Array(recipients_by_type(recipient_type)).compact) }
+  end
+
+  def engineering_owner_notification?
+    Array(execution_data['recipient']).include?('ticket_engineering_owner')
+  end
+
+  def engineering_owner_email
+    identifier = record.engineering_owner.to_s
+    return if !identifier.match?(%r{\A[1-9]\d*\z})
+
+    # Recheck access because assignments can outlive a user's role or group membership.
+    user = User.find_by(id: identifier, active: true)
+    return if !user || user.id == 1 || !user.permissions?('ticket.agent')
+    return if !user.group_access?(record.group_id, 'read')
+
+    user.email.presence
   end
 
   def recipients_checked
