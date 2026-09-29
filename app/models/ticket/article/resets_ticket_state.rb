@@ -31,6 +31,9 @@ module Ticket::Article::ResetsTicketState
     ticket = Ticket.find_by(id: ticket_id)
     return true if !ticket
 
+    # Incident transitions are explicit agent actions, not a side effect of communication.
+    return true if Ticket::State::INCIDENT_TRANSITIONS.key?(ticket.state.name)
+
     new_state = Ticket::State.find_by(default_create: true)
     return true if ticket.state_id != new_state.id
 
